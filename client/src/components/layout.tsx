@@ -1,8 +1,23 @@
-import { Link } from "wouter";
-import { Star, Menu, User } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { Star, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(loggedIn);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    setIsLoggedIn(false);
+    setLocation("/");
+  };
+
   return (
     <div className="min-h-screen flex flex-col font-sans text-foreground bg-[#fcfcfc]">
       {/* Header */}
@@ -18,14 +33,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Categories</a>
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Blog</a>
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">For Coaches</a>
+            {/* Removed unused nav items (Categories, Blog) */}
+            <Link href="/for-coaches">
+              <a className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">For Coaches</a>
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="hidden md:flex">Log in</Button>
-            <Button size="sm" className="hidden md:flex font-medium">For Coaches</Button>
+            {isLoggedIn ? (
+              <Button onClick={handleLogout} variant="ghost" size="sm" className="hidden md:flex">
+                Log out
+              </Button>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="hidden md:flex">Log in</Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm" className="hidden md:flex font-medium">Sign up</Button>
+                </Link>
+              </>
+            )}
+            
             <Button variant="ghost" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>
@@ -68,7 +97,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <ul className="space-y-2 text-sm">
                 <li><a href="#" className="hover:underline">Trust in Reviews</a></li>
                 <li><a href="#" className="hover:underline">Help Center</a></li>
-                <li><a href="#" className="hover:underline">Log In</a></li>
+                {/* Updated footer link */}
+                <li><Link href="/login"><a className="hover:underline">Log In</a></Link></li>
               </ul>
             </div>
 

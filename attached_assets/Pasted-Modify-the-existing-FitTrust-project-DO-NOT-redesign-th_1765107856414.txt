@@ -1,0 +1,119 @@
+Modify the existing FitTrust project.
+DO NOT redesign the UI. DO NOT change styling unnecessarily.
+Only fix functionality and navigation.
+
+========================
+ISSUE 1 + 2: LOGIN & SIGNUP
+========================
+
+Fix the broken Login button and add a Signup option.
+
+NAVBAR CHANGES:
+- Remove current broken Login behavior
+- Add two buttons in navbar:
+  1) Log in
+  2) Sign up
+
+Create pages:
+- /login
+- /signup
+
+LOGIN PAGE (/login):
+- Email input
+- Password input
+- Login button
+- Text link: "Create an account" → /signup
+
+On submit:
+- Prevent page reload
+- console.log email + password
+- Simulate login using:
+  localStorage.setItem("isLoggedIn", "true")
+- Redirect to homepage
+
+SIGNUP PAGE (/signup):
+- Name, Email, Password inputs
+- Sign up button
+- Text link: "Already have an account?" → /login
+
+On submit:
+- console.log form data
+- localStorage.setItem("isLoggedIn", "true")
+- Redirect to homepage
+
+AUTH STATE:
+- If isLoggedIn === true:
+  - Hide Login & Signup buttons
+  - Show Logout button
+- Logout clears localStorage and redirects home
+
+========================
+ISSUE 3: FOR COACHES PAGE
+========================
+
+Create a page /for-coaches
+
+Purpose:
+Display all coach profile data in one place (admin-style view).
+
+Page content:
+- Heading: "For Coaches"
+- List all existing coach profiles (name, category, rating, link)
+- Each item links to its coach profile page (/coach/slug)
+
+This page is informational only (no auth required for MVP).
+
+The main "For Coaches" navbar button should link here.
+
+========================
+ISSUE 4: SEARCH FUNCTIONALITY
+========================
+
+Make the homepage search input functional.
+
+Behavior:
+- When user types a name and clicks Search:
+  - Redirect to /search?q=SEARCH_TERM
+
+Create SEARCH RESULTS page (/search):
+- Read query parameter from URL
+- Display heading:
+  "Search results for: {query}"
+- Filter coach list by name (case-insensitive)
+- Display matching coach cards
+- Each result links to coach profile page
+- If no result:
+  Show "No coaches found"
+
+========================
+ISSUE 5: REMOVE UNUSED NAV ITEMS
+========================
+
+Remove these buttons from the top navbar completely:
+- Blog
+- Categories
+- Duplicate For Coaches link if exists
+
+Final navbar buttons should be:
+- Logo (home)
+- For Coaches
+- Log in / Sign up (or Logout if logged in)
+
+========================
+IMPORTANT RULES:
+- Keep existing SEO coach pages intact
+- Keep current design language
+- Use simple JavaScript
+- Hardcoded data is fine
+- No backend
+- No database
+- Beginner-friendly code
+
+========================
+FINAL GOAL:
+A working MVP where:
+- Login works (simulated)
+- Signup exists
+- Search works
+- For Coaches page works
+- Navigation is clean

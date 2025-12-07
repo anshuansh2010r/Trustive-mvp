@@ -5,14 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CoachCard } from "@/components/coach-card";
 import { MOCK_COACHES } from "@/lib/mockData";
+import { useLocation } from "wouter";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [, setLocation] = useLocation();
 
-  const filteredCoaches = MOCK_COACHES.filter(coach => 
-    coach.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    coach.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      setLocation(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <Layout>
@@ -36,8 +45,12 @@ export default function Home() {
               className="h-16 pl-12 text-lg rounded-full shadow-lg border-0 bg-white ring-offset-0 focus-visible:ring-2 focus-visible:ring-primary/50 transition-shadow"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
-            <Button className="absolute right-2 top-2 h-12 rounded-full px-8 text-base font-semibold">
+            <Button 
+              className="absolute right-2 top-2 h-12 rounded-full px-8 text-base font-semibold"
+              onClick={handleSearch}
+            >
               Search
             </Button>
           </div>
@@ -51,11 +64,11 @@ export default function Home() {
             <h2 className="text-3xl font-bold mb-2">Recently Reviewed Coaches</h2>
             <p className="text-muted-foreground">See who's making waves (good or bad) in the fitness industry.</p>
           </div>
-          <Button variant="outline">View All Categories</Button>
+          <Button variant="outline" onClick={() => setLocation('/for-coaches')}>View All Categories</Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCoaches.map((coach) => (
+          {MOCK_COACHES.map((coach) => (
             <CoachCard key={coach.id} coach={coach} />
           ))}
         </div>
