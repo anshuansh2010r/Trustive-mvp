@@ -1,13 +1,13 @@
 import { useLocation } from "wouter";
 import { Layout } from "@/components/layout";
-import { MOCK_COACHES } from "@/lib/mockData";
+import { getCoaches } from "@/lib/mockData";
 import { CoachCard } from "@/components/coach-card";
 import { Button } from "@/components/ui/button";
 
 export default function SearchResults() {
   const [location] = useLocation();
+  const coaches = getCoaches();
   
-  // Parse query parameter manually since wouter doesn't have a built-in hook for it
   const getQueryParam = (name: string) => {
     const searchParams = new URLSearchParams(window.location.search);
     return searchParams.get(name) || "";
@@ -15,7 +15,7 @@ export default function SearchResults() {
 
   const query = getQueryParam("q");
 
-  const filteredCoaches = MOCK_COACHES.filter(coach => 
+  const filteredCoaches = coaches.filter(coach => 
     coach.name.toLowerCase().includes(query.toLowerCase()) || 
     coach.category.toLowerCase().includes(query.toLowerCase())
   );

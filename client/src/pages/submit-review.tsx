@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import { Layout } from "@/components/layout";
-import { MOCK_COACHES } from "@/lib/mockData";
+import { getCoach, addReview, Review } from "@/lib/mockData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +16,8 @@ export default function SubmitReview() {
   const [match, params] = useRoute("/review/:id");
   const [, setLocation] = useLocation();
   const coachId = params?.id;
-  const coach = MOCK_COACHES.find((c) => c.id === coachId);
+  
+  const coach = coachId ? getCoach(coachId) : undefined;
   const { toast } = useToast();
 
   const [rating, setRating] = useState(0);
@@ -24,19 +25,44 @@ export default function SubmitReview() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const data = Object.fromEntries(formData.entries());
-    
-    console.log("Review Submitted:", { ...data, rating });
-    
-    toast({
-      title: "Review Submitted",
-      description: "Thank you for your feedback! Your review is pending moderation.",
-    });
+    if (!coachId) return;
 
-    setTimeout(() => {
-        setLocation(`/coach/${coachId}`);
-    }, 1500);
+    const formData = new FormData(e.target as HTMLFormElement);
+    
+    // Create new review object
+    const newReview: Review = {
+        id: `r-${Date.now()}`,
+        author: formData.get("anonymous") === "on" ? "Anonymous" : "Verified User",
+        rating: rating,
+        date: "Just now",
+        title: formData.get("title") as string,
+        content: formData.get("content") as string,
+        verified: formData.get("paid") === "on",
+        location: formData.get("location") as string || "Unknown Location"
+    };
+
+    console.log("Review Submitted:", newReview);
+    
+    // Add to "database"
+    const success = addReview(coachId, newReview);
+
+    if (success) {
+        toast({
+            title: "Review Submitted",
+            description: "Thank you for your feedback! Your review is live.",
+        });
+    
+        // Redirect immediately to show the review
+        setTimeout(() => {
+            setLocation(`/coach/${coachId}`);
+        }, 500);
+    } else {
+        toast({
+            title: "Error",
+            description: "Could not submit review. Please try again.",
+            variant: "destructive"
+        });
+    }
   };
 
   if (!coach) return <Layout><div>Coach not found</div></Layout>;
@@ -79,7 +105,9 @@ export default function SubmitReview() {
                       </button>
                     ))}
                   </div>
-                  <input type="hidden" name="rating" value={rating} required />
+                  {/* Hidden input to ensure form validation if needed, though we use state */}
+                  <input type="number" name="rating" value={rating} required className="sr-only" min="1" max="5" onChange={()=>{}}/>
+                  {rating === 0 && <p className="text-sm text-destructive">Please select a star rating</p>}
                 </div>
 
                 {/* Review Content */}
@@ -99,23 +127,23 @@ export default function SubmitReview() {
                       required 
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="location">City / Address of Service</Label>
+                    <Input id="location" name="location" placeholder="e.g. New York, NY" required />
+                  </div>
                 </div>
 
                 {/* Verification */}
                 <div className="space-y-4 p-6 bg-secondary/20 rounded-lg border border-secondary">
-                  <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Verification (Optional)</h4>
+                  <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Verification</h4>
                   
                   <div className="flex items-start space-x-3">
                     <Checkbox id="paid" name="paid" />
                     <div className="grid gap-1.5 leading-none">
                       <Label htmlFor="paid" className="cursor-pointer font-medium">I paid for this service</Label>
-                      <p className="text-sm text-muted-foreground">This helps us verify legitimate reviews.</p>
+                      <p className="text-sm text-muted-foreground">This adds the "Verified Client" badge to your review.</p>
                     </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="proof">Upload Proof of Purchase (Screenshot)</Label>
-                    <Input id="proof" type="file" className="cursor-pointer bg-white" />
                   </div>
                 </div>
 
@@ -130,7 +158,7 @@ export default function SubmitReview() {
                     Submit Review
                     </Button>
                     <p className="text-xs text-center text-muted-foreground">
-                        By submitting, you agree to our <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Community Guidelines</a>.
+                        By submitting, you agree to our Terms of Service.
                     </p>
                 </div>
 

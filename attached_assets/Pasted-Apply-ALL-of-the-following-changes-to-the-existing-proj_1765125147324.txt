@@ -1,0 +1,187 @@
+Apply ALL of the following changes to the existing project.
+This is a final MVP polish pass.
+
+IMPORTANT RULES:
+- Do NOT redesign the UI
+- Keep existing layout and styling wherever possible
+- Focus on functionality, wiring, and correctness
+- Frontend-only MVP is fine
+- Use simple JavaScript & local state if needed
+
+==================================================
+1) BRAND & LOGO
+==================================================
+
+- Change brand name everywhere from any old name to: Trustive
+- Replace logo with:
+  Green square background + white 5-point star (clean, centered)
+- Use this logo consistently in:
+  navbar
+  footer
+  favicon (if exists)
+  pages where logo is shown
+
+==================================================
+2) AUTH PROFILE (TOP RIGHT)
+==================================================
+
+- Add a small user profile icon/avatar at the top right
+- Default profile picture should appear beside the Logout button
+- This profile icon represents the reviewer user
+- Clicking it can open a simple dropdown (optional MVP):
+  - My Profile
+  - Logout
+
+(No backend auth needed; simulated auth is fine)
+
+==================================================
+3) COACH PROFILE CREATION
+==================================================
+
+- Add a button: "Create Coach Profile"
+- This button is visible for coaches
+- Leads to a page where coaches can submit their profile
+
+PROFILE FORM FIELDS:
+- Full name
+- Category
+- Country
+- City / Address (IMPORTANT)
+- Instagram
+- Website (optional)
+
+RULE:
+- Website button/link should ONLY appear on coach profile page
+  IF the coach has added a website.
+- If no website provided, hide website button completely.
+
+==================================================
+4) REVIEWS — FIX ALL ISSUES
+==================================================
+
+REVIEW ISSUES TO FIX:
+- Submitted reviews are NOT showing → FIX this
+- Reviews should render immediately after submission
+- Reviews must be tied to the correct coach profile
+
+REVIEW FORM MUST INCLUDE:
+- Star rating (clickable stars ONLY, no select, no checkmark)
+- Review title
+- Review text
+- Address / City of service (IMPORTANT)
+- Checkbox: “I paid for this service”
+- Optional anonymous toggle
+
+STAR RATING FIX:
+- REMOVE any checkmark or select/dropdown
+- Use 5 clickable stars only
+- Store selected rating in JS properly
+
+REVIEW COUNT FIX:
+- Review number shown must ALWAYS equal
+  the number of reviews actually displayed
+- No fake or hardcoded numbers
+
+==================================================
+5) CLAIM PROFILE PAGE
+==================================================
+
+- Create a page: /claim-profile
+- Clicking "Claim this profile" should navigate here
+
+FORM FIELDS:
+- Coach name
+- Email
+- Message
+- Instruction text:
+  "Please contact us from your official Instagram or professional email."
+
+(Manual verification is fine for MVP)
+
+==================================================
+6) COACH DASHBOARD (FUNCTIONAL MVP)
+==================================================
+
+Create a page: /manage-profile
+
+This page allows a coach (simulated auth is fine) to:
+- View their professional profile
+- Edit:
+  name
+  bio
+  website
+- View all reviews on their profile
+- Reply to reviews (text replies shown under reviews)
+
+Replies should display clearly as:
+"Response from professional"
+
+No backend needed — local state is acceptable.
+
+==================================================
+7) STATIC PAGES (MUST WORK)
+==================================================
+
+ABOUT US PAGE (/about):
+Use this content (exact text allowed):
+---
+Trustive is a trust and review platform built to help people make better decisions before paying for services.
+
+We provide a transparent space where users can read real experiences related to paid services, understand patterns, and choose with confidence. Trustive focuses on fairness, clarity, and moderation — not promotion or judgment.
+
+Our goal is simple:
+make trust easier, decisions safer, and transparency standard.
+---
+
+TRUST & SAFETY PAGE (/trust-safety):
+Must exist and be accessible from footer.
+
+CONTACT PAGE (/contact):
+Show clearly:
+Email: trustive.com@gmail.com
+Instagram: @trustive_
+
+TRUST IN REVIEWS PAGE (/trust-in-reviews):
+Explain how reviews are moderated and verified.
+Link must work from footer.
+
+==================================================
+8) FOOTER CLEANUP (FINAL)
+==================================================
+
+FOOTER MUST:
+- NOT include Login
+- NOT include For Coaches section
+- NOT include auth links
+
+FINAL FOOTER LINKS ONLY:
+- About Us → /about
+- Trust & Safety → /trust-safety
+- Trust in Reviews → /trust-in-reviews
+- Contact → /contact
+
+Footer should be informational only.
+
+==================================================
+9) GENERAL QUALITY FIXES
+==================================================
+
+- All buttons must be clickable and lead somewhere meaningful
+- No dead links
+- No placeholder numbers
+- Search must still work
+- Existing SEO profile pages must remain intact
+
+==================================================
+FINAL GOAL
+==================================================
+
+After this update:
+- Reviews work correctly
+- Counts are accurate
+- Profiles feel real
+- Footer is clean
+- Branding is consistent
+- Trustive feels like a real, usable MVP
+
+This is the final MVP polish pass.

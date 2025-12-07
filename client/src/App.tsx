@@ -11,6 +11,13 @@ import Login from "@/pages/login";
 import Signup from "@/pages/signup";
 import ForCoaches from "@/pages/for-coaches";
 import SearchResults from "@/pages/search";
+import ClaimProfile from "@/pages/claim-profile";
+import CreateProfile from "@/pages/create-profile";
+import ManageProfile from "@/pages/manage-profile";
+import About from "@/pages/about";
+import Contact from "@/pages/contact";
+import TrustSafety from "@/pages/trust-safety";
+import TrustInReviews from "@/pages/trust-in-reviews";
 
 function Router() {
   return (
@@ -22,6 +29,13 @@ function Router() {
       <Route path="/search" component={SearchResults} />
       <Route path="/coach/:id" component={Profile} />
       <Route path="/review/:id" component={SubmitReview} />
+      <Route path="/claim-profile" component={ClaimProfile} />
+      <Route path="/create-profile" component={CreateProfile} />
+      <Route path="/manage-profile" component={ManageProfile} />
+      <Route path="/about" component={About} />
+      <Route path="/contact" component={Contact} />
+      <Route path="/trust-safety" component={TrustSafety} />
+      <Route path="/trust-in-reviews" component={TrustInReviews} />
       <Route component={NotFound} />
     </Switch>
   );

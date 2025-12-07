@@ -7,6 +7,7 @@ export interface Review {
   content: string;
   verified: boolean;
   location?: string;
+  reply?: string; // Coach reply
 }
 
 export interface Coach {
@@ -14,25 +15,30 @@ export interface Coach {
   name: string;
   handle: string; // Instagram
   category: string;
+  country?: string; // Added country
   avatar: string; // placeholder text or url
-  rating: number;
-  reviewCount: number;
+  rating: number; // Calculated dynamically
+  reviewCount: number; // Calculated dynamically
   location: string;
   bio: string;
+  website?: string; // Optional website
   reviews: Review[];
 }
 
-export const MOCK_COACHES: Coach[] = [
+// Initial mock data
+const INITIAL_COACHES: Coach[] = [
   {
     id: "coach-1",
     name: "Alex Rivera",
     handle: "@arivera_fit",
     category: "Fat Loss & Lifestyle",
+    country: "USA",
     avatar: "AR",
-    rating: 4.8,
-    reviewCount: 124,
+    rating: 0, // Will be calculated
+    reviewCount: 0, // Will be calculated
     location: "Los Angeles, CA",
     bio: "Helping busy professionals lose fat and keep it off without giving up their favorite foods.",
+    website: "https://alexriverafit.com",
     reviews: [
       {
         id: "r1",
@@ -61,11 +67,13 @@ export const MOCK_COACHES: Coach[] = [
     name: "Muscle Momma",
     handle: "@musclemomma_pro",
     category: "Postpartum & Strength",
+    country: "USA",
     avatar: "MM",
-    rating: 4.9,
-    reviewCount: 89,
+    rating: 0,
+    reviewCount: 0,
     location: "Austin, TX",
     bio: "Specializing in helping moms get their strength back safely. Diastasis recti safe programming.",
+    website: "https://musclemomma.com",
     reviews: [
       {
         id: "r3",
@@ -84,11 +92,13 @@ export const MOCK_COACHES: Coach[] = [
     name: "David Chen",
     handle: "@dchen_performance",
     category: "Hybrid Athlete",
+    country: "UK",
     avatar: "DC",
-    rating: 3.5,
-    reviewCount: 42,
+    rating: 0,
+    reviewCount: 0,
     location: "London, UK",
     bio: "Run fast, lift heavy. Hybrid training for the modern athlete.",
+    // No website for testing
     reviews: [
       {
         id: "r4",
@@ -103,3 +113,79 @@ export const MOCK_COACHES: Coach[] = [
     ]
   }
 ];
+
+// Calculate initial ratings
+INITIAL_COACHES.forEach(coach => {
+  const totalStars = coach.reviews.reduce((acc, r) => acc + r.rating, 0);
+  coach.reviewCount = coach.reviews.length;
+  coach.rating = coach.reviewCount > 0 ? Number((totalStars / coach.reviewCount).toFixed(1)) : 0;
+});
+
+
+// Simple in-memory store simulation (for MVP session persistence within browser refresh limit, 
+// normally we'd use localStorage for everything but let's try to be cleaner)
+// Actually, request says "Reviews must be tied to the correct coach profile" and "Reviews should render immediately".
+// We will use localStorage to persist the "database" so it works across pages.
+
+const STORAGE_KEY = "trustive_coaches_data";
+
+export function getCoaches(): Coach[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error("Failed to parse coaches from storage", e);
+  }
+  // Initialize storage if empty
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_COACHES));
+  return INITIAL_COACHES;
+}
+
+export function getCoach(id: string): Coach | undefined {
+  const coaches = getCoaches();
+  return coaches.find(c => c.id === id);
+}
+
+export function addReview(coachId: string, review: Review) {
+  const coaches = getCoaches();
+  const coachIndex = coaches.findIndex(c => c.id === coachId);
+  
+  if (coachIndex !== -1) {
+    const coach = coaches[coachIndex];
+    coach.reviews.unshift(review); // Add to top
+    
+    // Recalculate stats
+    const totalStars = coach.reviews.reduce((acc, r) => acc + r.rating, 0);
+    coach.reviewCount = coach.reviews.length;
+    coach.rating = coach.reviewCount > 0 ? Number((totalStars / coach.reviewCount).toFixed(1)) : 0;
+    
+    coaches[coachIndex] = coach;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(coaches));
+    return true;
+  }
+  return false;
+}
+
+export function createCoach(newCoach: Coach) {
+    const coaches = getCoaches();
+    coaches.push(newCoach);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(coaches));
+}
+
+export function updateCoach(updatedCoach: Coach) {
+  const coaches = getCoaches();
+  const index = coaches.findIndex(c => c.id === updatedCoach.id);
+  if (index !== -1) {
+    coaches[index] = updatedCoach;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(coaches));
+    return true;
+  }
+  return false;
+}
+
+// Initialize on load if needed
+if (typeof window !== "undefined" && !localStorage.getItem(STORAGE_KEY)) {
+   localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_COACHES));
+}

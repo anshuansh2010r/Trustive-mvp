@@ -1,6 +1,6 @@
 import { Link, useRoute } from "wouter";
 import { Layout } from "@/components/layout";
-import { MOCK_COACHES } from "@/lib/mockData";
+import { getCoach } from "@/lib/mockData";
 import { StarRating } from "@/components/star-rating";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -11,7 +11,9 @@ import { CheckCircle, AlertCircle, MapPin, Instagram, ExternalLink } from "lucid
 export default function Profile() {
   const [match, params] = useRoute("/coach/:id");
   const coachId = params?.id;
-  const coach = MOCK_COACHES.find((c) => c.id === coachId);
+  
+  // Fetch fresh data
+  const coach = coachId ? getCoach(coachId) : undefined;
 
   if (!coach) {
     return <Layout><div className="container py-20 text-center">Coach not found</div></Layout>;
@@ -62,11 +64,17 @@ export default function Profile() {
                         Write a Review
                     </Button>
                 </Link>
-                <Button variant="outline" className="w-full md:w-auto">
-                    Visit Website <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
+                
+                {coach.website && (
+                    <a href={coach.website} target="_blank" rel="noopener noreferrer" className="w-full md:w-auto">
+                        <Button variant="outline" className="w-full">
+                            Visit Website <ExternalLink className="ml-2 h-4 w-4" />
+                        </Button>
+                    </a>
+                )}
+                
                 <div className="text-xs text-center text-muted-foreground mt-2">
-                    Are you {coach.name}? <a href="#" className="underline">Claim this profile</a>
+                    Are you {coach.name}? <Link href="/claim-profile" className="underline">Claim this profile</Link>
                 </div>
             </div>
           </div>
@@ -98,13 +106,19 @@ export default function Profile() {
               {/* Right Column: Reviews List */}
               <div className="lg:col-span-2 space-y-6">
                   <div className="flex items-center justify-between">
-                      <h2 className="text-2xl font-bold">Reviews</h2>
+                      <h2 className="text-2xl font-bold">Reviews ({coach.reviewCount})</h2>
                       <select className="bg-transparent text-sm font-medium border-none outline-none cursor-pointer">
                           <option>Most Recent</option>
                           <option>Highest Rated</option>
                           <option>Lowest Rated</option>
                       </select>
                   </div>
+
+                  {coach.reviews.length === 0 && (
+                      <div className="text-center py-12 bg-white rounded-lg border">
+                          <p className="text-muted-foreground">No reviews yet. Be the first to review!</p>
+                      </div>
+                  )}
 
                   {coach.reviews.map((review) => (
                       <div key={review.id} className="bg-white p-6 md:p-8 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
@@ -141,6 +155,14 @@ export default function Profile() {
                           <p className="text-muted-foreground leading-relaxed">
                               {review.content}
                           </p>
+
+                          {/* Coach Reply Section */}
+                          {review.reply && (
+                              <div className="mt-6 pl-4 border-l-4 border-primary/20 bg-muted/30 p-4 rounded-r">
+                                  <p className="text-sm font-bold text-primary mb-1">Response from professional</p>
+                                  <p className="text-sm text-muted-foreground">{review.reply}</p>
+                              </div>
+                          )}
 
                           <div className="mt-6 flex gap-4">
                               <Button variant="ghost" size="sm" className="text-muted-foreground h-auto p-0 hover:bg-transparent hover:text-foreground">

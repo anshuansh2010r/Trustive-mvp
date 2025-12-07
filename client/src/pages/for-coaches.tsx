@@ -1,22 +1,32 @@
 import { Layout } from "@/components/layout";
-import { MOCK_COACHES } from "@/lib/mockData";
+import { getCoaches } from "@/lib/mockData";
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { StarRating } from "@/components/star-rating";
+import { Button } from "@/components/ui/button";
 
 export default function ForCoaches() {
+  const coaches = getCoaches();
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-8">For Coaches</h1>
-        <p className="text-muted-foreground mb-8">
-          Browse our directory of verified coaches.
-        </p>
+        <div className="flex justify-between items-center mb-8">
+            <div>
+                <h1 className="text-3xl font-bold mb-2">For Coaches</h1>
+                <p className="text-muted-foreground">
+                Browse our directory of verified coaches.
+                </p>
+            </div>
+            <Link href="/create-profile">
+                <Button>Create Coach Profile</Button>
+            </Link>
+        </div>
 
         <div className="grid gap-4">
-          {MOCK_COACHES.map((coach) => (
+          {coaches.map((coach) => (
             <Link key={coach.id} href={`/coach/${coach.id}`}>
               <a className="block group">
                 <Card className="hover:shadow-md transition-all">
@@ -47,8 +57,9 @@ export default function ForCoaches() {
                       </div>
                     </div>
 
-                    <div className="hidden md:block text-sm text-muted-foreground">
-                      {coach.location}
+                    <div className="hidden md:block text-sm text-muted-foreground text-right">
+                      <div>{coach.location}</div>
+                      {coach.country && <div className="text-xs opacity-70">{coach.country}</div>}
                     </div>
                   </CardContent>
                 </Card>

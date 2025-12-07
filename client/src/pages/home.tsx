@@ -4,12 +4,13 @@ import { Layout } from "@/components/layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CoachCard } from "@/components/coach-card";
-import { MOCK_COACHES } from "@/lib/mockData";
+import { getCoaches } from "@/lib/mockData";
 import { useLocation } from "wouter";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [, setLocation] = useLocation();
+  const coaches = getCoaches();
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -68,7 +69,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MOCK_COACHES.map((coach) => (
+          {coaches.slice(0, 3).map((coach) => (
             <CoachCard key={coach.id} coach={coach} />
           ))}
         </div>
