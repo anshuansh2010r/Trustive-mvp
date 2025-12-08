@@ -11,11 +11,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<any>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
@@ -126,9 +134,70 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </>
             )}
             
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-            </Button>
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle className="text-left">Menu</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-4 mt-6">
+                  <Link href="/create-profile">
+                    <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">
+                      Publish as a Coach
+                    </a>
+                  </Link>
+
+                  {isLoggedIn ? (
+                    <>
+                      <div className="flex flex-col gap-1 py-2 border-y">
+                        <p className="font-medium">{userInfo?.name || "User"}</p>
+                        <p className="text-sm text-muted-foreground">{userInfo?.email}</p>
+                      </div>
+
+                      {userRole === "coach" && (
+                        <Link href="/manage-profile">
+                          <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">
+                            Coach Dashboard
+                          </a>
+                        </Link>
+                      )}
+                      
+                      <Link href="/for-coaches">
+                        <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">
+                          For Coaches
+                        </a>
+                      </Link>
+
+                      <button
+                        onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                        className="text-lg font-medium text-red-600 text-left hover:text-red-700 transition-colors flex items-center gap-2"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Log out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/for-coaches">
+                        <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">
+                          For Coaches
+                        </a>
+                      </Link>
+                      <Link href="/login">
+                        <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">Log in</a>
+                      </Link>
+                      <Link href="/signup">
+                        <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">Sign up</a>
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
