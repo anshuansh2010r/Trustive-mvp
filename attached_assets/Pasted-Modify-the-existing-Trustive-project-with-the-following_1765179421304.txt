@@ -1,0 +1,243 @@
+Modify the existing Trustive project with the following changes.
+
+THIS IS A FINAL MVP STABILIZATION + AUTH + CLAIM UPDATE.  
+Do NOT redesign the UI.  
+Do NOT remove existing working pages (profiles, reviews, footer, trust pages).  
+Only extend and fix logic.
+
+==================================================
+1) USER TYPES & LOGIN MODALITY
+==================================================
+
+Goal: Separate USERS and COACHES cleanly.
+
+1.1 Login Type Selection:
+- On the login page, add two options:
+  - "Login as User"
+  - "Login as Coach"
+- This can be radio buttons, tabs, or a dropdown.
+- Based on selection:
+  - "Login as User" → logs into user account and shows the EXISTING user experience (user dashboard minimal).
+  - "Login as Coach" → logs into a coach account and opens the COACH DASHBOARD.
+
+1.2 Separate Auth Data:
+Implement separate storage for:
+- Users
+- Coaches
+
+Use either:
+- a simple database if already present, OR
+- localStorage as a fallback
+
+For example:
+- localStorage["trustive_users"] = JSON array of user accounts
+- localStorage["trustive_coaches"] = JSON array of coach accounts
+
+Each user account should at least store:
+- id
+- name
+- email
+- password (NOT secure, just hashed or plain for MVP)
+- profileImage (optional URL/base64)
+
+Each coach account should at least store:
+- id
+- name
+- email
+- password
+- profileImage
+- linkedCoachProfileId (link to coach profile in the main coach list)
+
+1.3 Fix Login/Signup Malfunction:
+- Currently login/signup only work for a single user. Fix this so:
+  - Multiple users can sign up and log in.
+  - Multiple coaches can sign up and log in.
+- Sign up should:
+  - Add a new user/coach entry to the correct array in storage.
+- Login should:
+  - Check credentials against the correct list (users vs coaches).
+  - Set a "currentUser" or "currentCoach" object in localStorage like:
+    - localStorage["trustive_current_user"]
+    - localStorage["trustive_current_coach"]
+
+
+==================================================
+2) PROFILE PICTURES (USERS & COACHES)
+==================================================
+
+2.1 User Profile Picture:
+- On user signup OR in user dashboard, add an option to upload a profile picture.
+- Store this as:
+  - a URL (if using an upload service) OR
+  - base64 string inside user account object (for MVP).
+- In the USER dashboard, show:
+  - user name
+  - user profile picture
+  (Only these two are required in user dashboard for now.)
+
+2.2 Coach Profile Picture:
+- When publishing a coach profile or claiming a profile, add an option to upload a profile picture for the coach (headshot or brand logo).
+- This picture should show:
+  - On the coach profile page
+  - In the coach dashboard
+
+2.3 Top-right Avatar:
+- At the top right (where Logout is), show a small circular avatar:
+  - For logged-in users: their profile picture
+  - For logged-in coaches: their profile picture
+- If no picture is set, show a generic default avatar icon.
+
+
+==================================================
+3) COACH PROFILE PUBLISHING & CLAIMING
+==================================================
+
+3.1 "Publish as a Coach" Button:
+- Add a button in the top navbar: "Publish as a Coach"
+- This should lead to the existing "Create/Publish Coach Profile" page.
+
+3.2 Password & Picture on Publishing:
+- When publishing a NEW coach profile (not claiming), the form must include:
+  - Password (for coach login later)
+  - Profile picture upload
+- On submit:
+  - Create both:
+    - a COACH PROFILE entry (in the existing coaches list/system)
+    - a COACH ACCOUNT in the coach auth storage (trustive_coaches) with:
+      - linkedCoachProfileId
+      - email
+      - password
+      - profileImage, etc.
+
+3.3 Claim ≠ Instant Control:
+Claiming a profile must NOT give instant control.
+
+Update claim logic to:
+
+- Each coach profile must have:
+  - claimed: true/false
+  - claim_status: "unclaimed" | "pending" | "claimed"
+  - owner_user_id or owner_coach_id (ID from coach accounts list)
+
+- When someone submits the "Claim this profile" form:
+  - Set claim_status = "pending"
+  - Do NOT set claimed = true yet
+  - Do NOT assign owner_user_id yet
+  - Show a confirmation message like:
+    "Your claim request has been submitted and is pending review."
+
+- Only after manual approval (for now you can simulate this via developer/admin UI or by toggling values in code/temp admin page):
+  - Set claim_status = "claimed"
+  - Set claimed = true
+  - Set owner_coach_id to the correct coach account
+  - Only then allow editing of profile fields.
+
+3.4 Password on Claim:
+- When a claim is approved, allow the coach to set a password if they don’t already have one.
+- This password is then required to:
+  - log in as coach
+  - access coach dashboard for that profile.
+
+3.5 Single Owner Rule (One Owner Per Profile):
+- Once a coach profile is claimed (claim_status = "claimed", claimed = true):
+  - Additional claim requests should go into a "queue" (e.g. an array or list for admins to review).
+  - But DO NOT override the existing owner automatically.
+- Only admin/dev (you) should decide if ownership changes.
+
+
+==================================================
+4) COACH DASHBOARD & EDIT PERMISSIONS
+==================================================
+
+4.1 Coach Dashboard Access:
+- When user logs in as a coach:
+  - Show the COACH DASHBOARD (not user dashboard).
+  - Load the coach data from trustive_coaches and the linked coach profile from the main profiles list.
+
+4.2 Edit Permissions:
+- Only the coach who owns the profile should be able to:
+  - edit name, bio, website, profile picture, etc.
+- Implement checks like:
+  - If logged-in coach.id === coachProfile.owner_coach_id → show edit buttons.
+  - Else → hide edit buttons.
+
+4.3 Reply to Reviews:
+- In coach dashboard, allow owner coach to reply to reviews as before.
+- Responses should show under the review with clear label:
+  "Response from professional".
+
+4.4 Website Visibility Rule:
+- On coach profile:
+  - ONLY show "Website" button/link IF a website was actually provided.
+  - If website field is empty/null → hide the button entirely.
+
+
+==================================================
+5) DEVELOPER-ONLY REMOVE PROFILE FEATURE
+==================================================
+
+Add a simple dev-only "Remove Profile" button for unverified or spammy coaches.
+
+- On coach profile page OR in a dev-only admin page:
+  - Add a button: "Remove Profile (Dev Only)"
+- When clicked:
+  - Prompt for a password.
+  - Only proceed if password == "removeit69"
+  - If correct:
+    - Remove the coach profile from the main profiles list.
+    - Optionally remove the associated coach auth account.
+  - If incorrect:
+    - Show "Invalid developer password."
+
+This is a simple safety tool for cleanup during MVP.
+
+
+==================================================
+6) REVIEW SYSTEM STABILITY & RATE LIMIT
+==================================================
+
+6.1 Review Submission Working:
+- Ensure that when a user submits a review:
+  - It is properly attached to the correct coach profile.
+  - It shows up immediately in the Reviews section of that profile.
+  - The review count at the top matches the number of reviews in the list (no fake numbers, no mismatch).
+
+6.2 Rate Limiting:
+- Implement a basic frontend-only rate limit:
+  - The same user (same logged-in user or same browser if not logged in) should NOT be able to submit more than 5 reviews within 1 minute.
+- Simple approach:
+  - Track timestamps of last reviews in localStorage or in-memory.
+  - If user tries to submit >5 reviews in 60 seconds, show:
+    "You are submitting too many reviews. Please wait a moment."
+
+
+==================================================
+7) GENERAL STABILITY & NON-BREAKING BEHAVIOR
+==================================================
+
+- Keep all existing static pages as they are:
+  - About Us
+  - Trust & Safety
+  - Trust in Reviews
+  - Contact
+- Keep current SEO profile URLs intact.
+- Do NOT delete or rename main routes.
+- Ensure:
+  - Login and signup work for multiple accounts, not just one.
+  - User login → minimal user dashboard (name + picture).
+  - Coach login → coach dashboard with profile management and reply to reviews.
+- Do NOT add advanced security like OTP or external identity verification.
+- Comments in code should explain:
+  - Where user data is stored
+  - Where coach data is stored
+  - Where claim status is set/updated
+
+FINAL GOAL:
+After these changes, Trustive should have:
+- Working multi-user auth (users + coaches separated)
+- Safe, non-instant profile claiming
+- Clear ownership rules (one owner per profile)
+- Usable dashboards for users and coaches
+- Profile pictures for both roles
+- Rate-limited reviews
+- Stable, demo-ready MVP behavior.
