@@ -1,16 +1,18 @@
 import { Link, useRoute } from "wouter";
 import { Layout } from "@/components/layout";
-import { getCoach } from "@/lib/mockData";
+import { getCoach, removeCoachProfile } from "@/lib/mockData";
 import { StarRating } from "@/components/star-rating";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, AlertCircle, MapPin, Instagram, ExternalLink } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Profile() {
   const [match, params] = useRoute("/coach/:id");
   const coachId = params?.id;
+  const { toast } = useToast();
   
   // Fetch fresh data
   const coach = coachId ? getCoach(coachId) : undefined;
@@ -18,6 +20,20 @@ export default function Profile() {
   if (!coach) {
     return <Layout><div className="container py-20 text-center">Coach not found</div></Layout>;
   }
+
+  const handleDevRemove = () => {
+      const password = prompt("Enter Developer Password:");
+      if (password === "removeit69") {
+          if (coachId && removeCoachProfile(coachId)) {
+              toast({ title: "Profile Removed", description: "The profile was deleted." });
+              window.location.href = "/";
+          } else {
+              alert("Failed to remove profile.");
+          }
+      } else if (password) {
+          alert("Invalid developer password.");
+      }
+  };
 
   return (
     <Layout>
@@ -36,6 +52,7 @@ export default function Profile() {
                 <h1 className="text-4xl font-extrabold tracking-tight mb-2">{coach.name}</h1>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {coach.location}</span>
+                    {coach.country && <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-gray-100 rounded">{coach.country}</span>}
                     <span className="flex items-center gap-1"><Instagram className="h-4 w-4" /> {coach.handle}</span>
                     <Badge variant="outline" className="text-xs bg-muted/50">{coach.category}</Badge>
                 </div>
@@ -73,9 +90,16 @@ export default function Profile() {
                     </a>
                 )}
                 
-                <div className="text-xs text-center text-muted-foreground mt-2">
-                    Are you {coach.name}? <Link href="/claim-profile" className="underline">Claim this profile</Link>
-                </div>
+                {!coach.claimed && (
+                    <div className="text-xs text-center text-muted-foreground mt-2">
+                        Are you {coach.name}? <Link href="/claim-profile" className="underline">Claim this profile</Link>
+                    </div>
+                )}
+                
+                {/* Dev Only Button */}
+                <button onClick={handleDevRemove} className="text-[10px] text-red-300 hover:text-red-500 mt-4">
+                    Dev: Remove Profile
+                </button>
             </div>
           </div>
         </div>

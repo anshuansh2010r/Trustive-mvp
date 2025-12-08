@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,21 +9,56 @@ import { useToast } from "@/hooks/use-toast";
 import { getCoaches, updateCoach } from "@/lib/mockData";
 import { StarRating } from "@/components/star-rating";
 import { Badge } from "@/components/ui/badge";
+import { useLocation } from "wouter";
 
 export default function ManageProfile() {
   const { toast } = useToast();
-  // Simulate fetching logged in user's coach profile
-  // For MVP, we'll just grab the first one to simulate "My Profile"
-  const coaches = getCoaches();
-  const myCoach = coaches[0]; 
+  const [, setLocation] = useLocation();
+  const [loading, setLoading] = useState(true);
+  const [myCoach, setMyCoach] = useState<any>(null);
+  const [currentAccount, setCurrentAccount] = useState<any>(null);
   
-  const [name, setName] = useState(myCoach.name);
-  const [bio, setBio] = useState(myCoach.bio);
-  const [website, setWebsite] = useState(myCoach.website || "");
+  const [name, setName] = useState("");
+  const [bio, setBio] = useState("");
+  const [website, setWebsite] = useState("");
   const [replyText, setReplyText] = useState<{[key: string]: string}>({});
+
+  useEffect(() => {
+      // Check auth
+      const role = localStorage.getItem("userRole");
+      const accountStr = localStorage.getItem("trustive_current_coach");
+      
+      if (role !== "coach" || !accountStr) {
+          setLocation("/login");
+          return;
+      }
+
+      const account = JSON.parse(accountStr);
+      setCurrentAccount(account);
+
+      if (account.linkedCoachProfileId) {
+          const coaches = getCoaches();
+          const profile = coaches.find(c => c.id === account.linkedCoachProfileId);
+          if (profile) {
+              setMyCoach(profile);
+              setName(profile.name);
+              setBio(profile.bio);
+              setWebsite(profile.website || "");
+          }
+      }
+      setLoading(false);
+  }, []);
 
   const handleUpdateProfile = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!myCoach) return;
+
+    // Ownership check (redundant if we only loaded linked profile, but good practice)
+    if (myCoach.owner_coach_id && myCoach.owner_coach_id !== currentAccount.id) {
+         toast({ title: "Error", description: "You do not have permission to edit this profile.", variant: "destructive" });
+         return;
+    }
+
     const updated = {
         ...myCoach,
         name,
@@ -31,6 +66,8 @@ export default function ManageProfile() {
         website
     };
     updateCoach(updated);
+    // Update local state
+    setMyCoach(updated);
     toast({
         title: "Profile Updated",
         description: "Your changes have been saved."
@@ -38,10 +75,11 @@ export default function ManageProfile() {
   };
 
   const handleReply = (reviewId: string) => {
+      if (!myCoach) return;
       const text = replyText[reviewId];
       if (!text) return;
 
-      const reviewIndex = myCoach.reviews.findIndex(r => r.id === reviewId);
+      const reviewIndex = myCoach.reviews.findIndex((r: any) => r.id === reviewId);
       if (reviewIndex !== -1) {
           const updatedReviews = [...myCoach.reviews];
           updatedReviews[reviewIndex] = {
@@ -55,25 +93,35 @@ export default function ManageProfile() {
           };
           
           updateCoach(updatedCoach);
+          setMyCoach(updatedCoach); // Update local
+          
           toast({
               title: "Reply Posted",
               description: "Your response is now live."
           });
           
-          // Clear input
           setReplyText(prev => ({...prev, [reviewId]: ""}));
-          // Force re-render not needed as we are not using state for the coach object fully reactively here
-          // but in a real app queryClient would handle this. 
-          // Since we are reading from localStorage in component render, we might need to force update or just reload.
-          // For MVP simplicity:
-           window.location.reload();
       }
   };
+
+  if (loading) return <Layout><div>Loading...</div></Layout>;
+
+  if (!myCoach) {
+      return (
+          <Layout>
+              <div className="container mx-auto px-4 py-20 text-center">
+                  <h1 className="text-2xl font-bold mb-4">No Profile Linked</h1>
+                  <p className="mb-6">You are logged in as a coach but don't have a public profile yet.</p>
+                  <Button onClick={() => setLocation("/create-profile")}>Create Profile</Button>
+              </div>
+          </Layout>
+      );
+  }
 
   return (
     <Layout>
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-8">Coach Dashboard</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Edit Profile Column */}
@@ -90,7 +138,7 @@ export default function ManageProfile() {
                             </div>
                              <div className="space-y-2">
                                 <Label>Website</Label>
-                                <Input value={website} onChange={e => setWebsite(e.target.value)} />
+                                <Input value={website} onChange={e => setWebsite(e.target.value)} placeholder="https://" />
                             </div>
                              <div className="space-y-2">
                                 <Label>Bio</Label>
@@ -104,9 +152,11 @@ export default function ManageProfile() {
 
             {/* Reviews Management Column */}
             <div className="lg:col-span-2 space-y-6">
-                <h2 className="text-2xl font-bold">Your Reviews</h2>
+                <h2 className="text-2xl font-bold">Your Reviews ({myCoach.reviewCount})</h2>
                 
-                {myCoach.reviews.map(review => (
+                {myCoach.reviews.length === 0 && <p className="text-muted-foreground">No reviews yet.</p>}
+
+                {myCoach.reviews.map((review: any) => (
                     <Card key={review.id}>
                         <CardContent className="p-6">
                              <div className="flex justify-between items-start mb-4">
@@ -121,7 +171,7 @@ export default function ManageProfile() {
 
                             {review.reply ? (
                                 <div className="bg-muted/30 p-4 rounded border-l-4 border-primary">
-                                    <p className="text-xs font-bold text-primary mb-1">Your Reply</p>
+                                    <p className="text-xs font-bold text-primary mb-1">Response from professional</p>
                                     <p className="text-sm">{review.reply}</p>
                                 </div>
                             ) : (

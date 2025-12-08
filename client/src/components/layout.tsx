@@ -14,15 +14,32 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState<any>(null);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const role = localStorage.getItem("userRole");
     setIsLoggedIn(loggedIn);
+    setUserRole(role);
+
+    if (loggedIn) {
+        if (role === "user") {
+            const user = JSON.parse(localStorage.getItem("trustive_current_user") || "{}");
+            setUserInfo(user);
+        } else if (role === "coach") {
+            const coach = JSON.parse(localStorage.getItem("trustive_current_coach") || "{}");
+            setUserInfo(coach);
+        }
+    }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("trustive_current_user");
+    localStorage.removeItem("trustive_current_coach");
     setIsLoggedIn(false);
     setLocation("/");
   };
@@ -48,37 +65,48 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2">
+            
+            <Link href="/create-profile">
+               <Button variant="outline" size="sm" className="hidden md:flex mr-2">
+                 Publish as a Coach
+               </Button>
+            </Link>
+
             {isLoggedIn ? (
               <div className="flex items-center gap-4">
-                 <Link href="/manage-profile">
-                    <Button variant="outline" size="sm" className="hidden md:flex">
-                        Manage Profile
-                    </Button>
-                </Link>
+                 {userRole === "coach" && (
+                     <Link href="/manage-profile">
+                        <Button variant="ghost" size="sm" className="hidden md:flex">
+                            Coach Dashboard
+                        </Button>
+                    </Link>
+                 )}
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8 border">
-                        <AvatarFallback>U</AvatarFallback>
+                        <AvatarFallback>{userInfo?.name ? userInfo.name[0].toUpperCase() : "U"}</AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">User</p>
+                        <p className="text-sm font-medium leading-none">{userInfo?.name || "User"}</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                          user@example.com
+                          {userInfo?.email}
                         </p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                         <Link href="/manage-profile" className="w-full cursor-pointer">
-                            My Profile / Dashboard
-                        </Link>
-                    </DropdownMenuItem>
+                    {userRole === "coach" && (
+                         <DropdownMenuItem asChild>
+                             <Link href="/manage-profile" className="w-full cursor-pointer">
+                                Coach Dashboard
+                            </Link>
+                        </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
                       <LogOut className="mr-2 h-4 w-4" />

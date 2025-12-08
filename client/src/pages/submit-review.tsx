@@ -44,9 +44,18 @@ export default function SubmitReview() {
     console.log("Review Submitted:", newReview);
     
     // Add to "database"
-    const success = addReview(coachId, newReview);
+    const result = addReview(coachId, newReview);
 
-    if (success) {
+    if (result === "RATE_LIMIT") {
+        toast({
+            title: "Slow Down",
+            description: "You are submitting too many reviews. Please wait a moment.",
+            variant: "destructive"
+        });
+        return;
+    }
+
+    if (result) {
         toast({
             title: "Review Submitted",
             description: "Thank you for your feedback! Your review is live.",

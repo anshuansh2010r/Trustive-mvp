@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { getCoaches, updateCoach } from "@/lib/mockData";
 
 export default function ClaimProfile() {
   const { toast } = useToast();
@@ -13,6 +14,29 @@ export default function ClaimProfile() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // In a real app we would send this to backend.
+    // For MVP we just simulate the pending state but DO NOT update the coach object ownership yet.
+    // The requirement is: Set claim_status = "pending", do NOT set claimed = true.
+    
+    const formData = new FormData(e.target as HTMLFormElement);
+    const nameToCheck = formData.get("name") as string;
+    
+    // Find matching coach by name (naive match for MVP)
+    const coaches = getCoaches();
+    const coach = coaches.find(c => c.name.toLowerCase() === nameToCheck.toLowerCase());
+
+    if (coach) {
+        if (coach.claimed) {
+             toast({ title: "Error", description: "This profile is already claimed.", variant: "destructive" });
+             return;
+        }
+        
+        // Update mock data to pending
+        const updated = { ...coach, claim_status: "pending" as const };
+        updateCoach(updated);
+    }
+    
     setSubmitted(true);
     toast({
       title: "Claim Request Sent",
@@ -47,8 +71,8 @@ export default function ClaimProfile() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="name">Coach Name</Label>
-                <Input id="name" required placeholder="e.g. Alex Rivera" />
+                <Label htmlFor="name">Coach Name (on Trustive)</Label>
+                <Input id="name" name="name" required placeholder="e.g. Alex Rivera" />
               </div>
 
               <div className="space-y-2">

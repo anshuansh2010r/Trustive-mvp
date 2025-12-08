@@ -23,6 +23,10 @@ export interface Coach {
   bio: string;
   website?: string; // Optional website
   reviews: Review[];
+  // New properties for ownership/claims
+  claimed?: boolean;
+  claim_status?: "unclaimed" | "pending" | "claimed";
+  owner_coach_id?: string; // ID from auth system
 }
 
 // Initial mock data
@@ -124,10 +128,11 @@ INITIAL_COACHES.forEach(coach => {
 
 // Simple in-memory store simulation (for MVP session persistence within browser refresh limit, 
 // normally we'd use localStorage for everything but let's try to be cleaner)
-// Actually, request says "Reviews must be tied to the correct coach profile" and "Reviews should render immediately".
 // We will use localStorage to persist the "database" so it works across pages.
 
 const STORAGE_KEY = "trustive_coaches_data";
+const USERS_KEY = "trustive_users";
+const COACH_ACCOUNTS_KEY = "trustive_coach_accounts";
 
 export function getCoaches(): Coach[] {
   try {
@@ -148,7 +153,35 @@ export function getCoach(id: string): Coach | undefined {
   return coaches.find(c => c.id === id);
 }
 
+// Rate Limiting
+const RATE_LIMIT_KEY = "trustive_review_timestamps";
+const MAX_REVIEWS_PER_MINUTE = 5;
+
+export function checkReviewRateLimit(): boolean {
+    const now = Date.now();
+    let timestamps: number[] = [];
+    try {
+        const stored = localStorage.getItem(RATE_LIMIT_KEY);
+        if (stored) timestamps = JSON.parse(stored);
+    } catch {}
+
+    // Filter timestamps from last 60 seconds
+    timestamps = timestamps.filter(t => now - t < 60000);
+
+    if (timestamps.length >= MAX_REVIEWS_PER_MINUTE) {
+        return false;
+    }
+
+    timestamps.push(now);
+    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(timestamps));
+    return true;
+}
+
 export function addReview(coachId: string, review: Review) {
+  if (!checkReviewRateLimit()) {
+      return "RATE_LIMIT";
+  }
+
   const coaches = getCoaches();
   const coachIndex = coaches.findIndex(c => c.id === coachId);
   
@@ -183,6 +216,17 @@ export function updateCoach(updatedCoach: Coach) {
     return true;
   }
   return false;
+}
+
+export function removeCoachProfile(id: string) {
+    let coaches = getCoaches();
+    const initialLength = coaches.length;
+    coaches = coaches.filter(c => c.id !== id);
+    if (coaches.length !== initialLength) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(coaches));
+        return true;
+    }
+    return false;
 }
 
 // Initialize on load if needed
