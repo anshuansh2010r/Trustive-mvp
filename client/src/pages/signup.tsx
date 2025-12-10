@@ -74,7 +74,7 @@ export default function Signup() {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userRole", "coach");
         
-        toast({ title: "Coach Account Created", description: "You can now create or claim a profile." });
+        toast({ title: "Guru Account Created", description: "You can now create or claim a profile." });
         setLocation("/manage-profile"); // Will likely prompt to create profile there
     }
   };
@@ -93,7 +93,7 @@ export default function Signup() {
              <Tabs defaultValue="user" onValueChange={(v) => setRole(v as "user" | "coach")} className="w-full mb-6">
                 <TabsList className="w-full grid grid-cols-2">
                     <TabsTrigger value="user">I'm a User</TabsTrigger>
-                    <TabsTrigger value="coach">I'm a Coach</TabsTrigger>
+                    <TabsTrigger value="coach">I'm a Guru</TabsTrigger>
                 </TabsList>
             </Tabs>
 
@@ -131,7 +131,7 @@ export default function Signup() {
                 />
               </div>
               <Button type="submit" className="w-full mt-2">
-                  {role === "user" ? "Sign up as User" : "Sign up as Coach"}
+                  {role === "user" ? "Sign up as User" : "Sign up as Guru"}
               </Button>
             </form>
           </CardContent>

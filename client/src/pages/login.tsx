@@ -44,9 +44,9 @@ export default function Login() {
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("userRole", "coach");
             setLocation("/manage-profile");
-            toast({ title: "Welcome Coach!", description: `Logged in as ${coach.name}` });
+            toast({ title: "Welcome Guru!", description: `Logged in as ${coach.name}` });
         } else {
-             toast({ title: "Login Failed", description: "Invalid coach credentials.", variant: "destructive" });
+             toast({ title: "Login Failed", description: "Invalid guru credentials.", variant: "destructive" });
         }
     }
   };
@@ -65,7 +65,7 @@ export default function Login() {
             <Tabs defaultValue="user" onValueChange={(v) => setRole(v as "user" | "coach")} className="w-full mb-6">
                 <TabsList className="w-full grid grid-cols-2">
                     <TabsTrigger value="user">Login as User</TabsTrigger>
-                    <TabsTrigger value="coach">Login as Coach</TabsTrigger>
+                    <TabsTrigger value="coach">Login as Guru</TabsTrigger>
                 </TabsList>
             </Tabs>
 
@@ -75,7 +75,7 @@ export default function Login() {
                 <Input 
                   id="email" 
                   type="email" 
-                  placeholder={role === "user" ? "user@example.com" : "coach@example.com"}
+                  placeholder={role === "user" ? "user@example.com" : "guru@example.com"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required 
@@ -92,7 +92,7 @@ export default function Login() {
                 />
               </div>
               <Button type="submit" className="w-full mt-2">
-                  {role === "user" ? "Log in as User" : "Log in as Coach"}
+                  {role === "user" ? "Log in as User" : "Log in as Guru"}
               </Button>
             </form>
           </CardContent>

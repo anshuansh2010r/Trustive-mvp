@@ -13,7 +13,7 @@ export default function TrustSafety() {
           <ul>
             <li><strong>Verification:</strong> We prioritize verified reviews where proof of purchase has been submitted.</li>
             <li><strong>Moderation:</strong> All reviews are scanned for spam, hate speech, and conflict of interest.</li>
-            <li><strong>Fairness:</strong> We give coaches the right to reply to reviews, ensuring both sides of the story are heard.</li>
+            <li><strong>Fairness:</strong> We give gurus the right to reply to reviews, ensuring both sides of the story are heard.</li>
           </ul>
         </div>
       </div>

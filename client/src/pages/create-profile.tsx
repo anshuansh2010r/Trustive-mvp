@@ -86,7 +86,7 @@ export default function CreateProfile() {
       <div className="container mx-auto px-4 py-12 max-w-2xl">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Publish Coach Profile</CardTitle>
+            <CardTitle className="text-2xl">Publish Guru Profile</CardTitle>
             <CardDescription>
               Create your professional profile and account in one step.
             </CardDescription>
@@ -150,7 +150,7 @@ export default function CreateProfile() {
                         id="bio" 
                         name="bio"
                         required
-                        placeholder="Tell us about your coaching..." 
+                        placeholder="Tell us about your trading..." 
                         className="min-h-[100px]"
                     />
                   </div>

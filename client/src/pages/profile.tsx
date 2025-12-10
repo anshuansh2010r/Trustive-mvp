@@ -18,7 +18,7 @@ export default function Profile() {
   const coach = coachId ? getCoach(coachId) : undefined;
 
   if (!coach) {
-    return <Layout><div className="container py-20 text-center">Coach not found</div></Layout>;
+    return <Layout><div className="container py-20 text-center">Guru not found</div></Layout>;
   }
 
   const handleDevRemove = () => {
@@ -162,7 +162,7 @@ export default function Profile() {
                               </div>
                               {review.verified ? (
                                   <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 gap-1">
-                                      <CheckCircle className="h-3 w-3" /> Verified Client
+                                      <CheckCircle className="h-3 w-3" /> Verified Student
                                   </Badge>
                               ) : (
                                   <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 gap-1">

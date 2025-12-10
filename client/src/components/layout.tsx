@@ -68,7 +68,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/for-coaches">
-              <a className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">For Coaches</a>
+              <a className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">For Gurus</a>
             </Link>
           </nav>
 
@@ -76,7 +76,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             
             <Link href="/create-profile">
                <Button variant="outline" size="sm" className="hidden md:flex mr-2">
-                 Publish as a Coach
+                 Publish as a Guru
                </Button>
             </Link>
 
@@ -85,7 +85,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                  {userRole === "coach" && (
                      <Link href="/manage-profile">
                         <Button variant="ghost" size="sm" className="hidden md:flex">
-                            Coach Dashboard
+                            Guru Dashboard
                         </Button>
                     </Link>
                  )}
@@ -111,7 +111,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     {userRole === "coach" && (
                          <DropdownMenuItem asChild>
                              <Link href="/manage-profile" className="w-full cursor-pointer">
-                                Coach Dashboard
+                                Guru Dashboard
                             </Link>
                         </DropdownMenuItem>
                     )}
@@ -147,7 +147,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-col gap-4 mt-6">
                   <Link href="/create-profile">
                     <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">
-                      Publish as a Coach
+                      Publish as a Guru
                     </a>
                   </Link>
 
@@ -161,14 +161,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       {userRole === "coach" && (
                         <Link href="/manage-profile">
                           <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">
-                            Coach Dashboard
+                            Guru Dashboard
                           </a>
                         </Link>
                       )}
                       
                       <Link href="/for-coaches">
                         <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">
-                          For Coaches
+                          For Gurus
                         </a>
                       </Link>
 
@@ -184,7 +184,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <>
                       <Link href="/for-coaches">
                         <a onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">
-                          For Coaches
+                          For Gurus
                         </a>
                       </Link>
                       <Link href="/login">
@@ -219,7 +219,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <span>Trustive</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Bringing transparency to the online fitness coaching industry. Read real reviews from real clients.
+                Bringing transparency to the online trading education industry. Read real reviews from real students.
               </p>
             </div>
             

@@ -111,7 +111,7 @@ export default function ManageProfile() {
           <Layout>
               <div className="container mx-auto px-4 py-20 text-center">
                   <h1 className="text-2xl font-bold mb-4">No Profile Linked</h1>
-                  <p className="mb-6">You are logged in as a coach but don't have a public profile yet.</p>
+                  <p className="mb-6">You are logged in as a guru but don't have a public profile yet.</p>
                   <Button onClick={() => setLocation("/create-profile")}>Create Profile</Button>
               </div>
           </Layout>
@@ -121,7 +121,7 @@ export default function ManageProfile() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-8">Coach Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-8">Guru Dashboard</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Edit Profile Column */}

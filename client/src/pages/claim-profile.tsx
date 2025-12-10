@@ -65,13 +65,13 @@ export default function ClaimProfile() {
           <CardHeader>
             <CardTitle className="text-2xl">Claim Your Profile</CardTitle>
             <CardDescription>
-              To prevent fraud, we manually verify all coach profiles. Please provide your details below.
+              To prevent fraud, we manually verify all guru profiles. Please provide your details below.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="name">Coach Name (on Trustive)</Label>
+                <Label htmlFor="name">Guru Name (on Trustive)</Label>
                 <Input id="name" name="name" required placeholder="e.g. Alex Rivera" />
               </div>
 

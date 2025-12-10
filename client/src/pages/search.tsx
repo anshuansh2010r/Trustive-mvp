@@ -27,7 +27,7 @@ export default function SearchResults() {
           Search results for: <span className="text-primary">"{query}"</span>
         </h1>
         <p className="text-muted-foreground mb-8">
-          Found {filteredCoaches.length} {filteredCoaches.length === 1 ? 'coach' : 'coaches'}
+          Found {filteredCoaches.length} {filteredCoaches.length === 1 ? 'guru' : 'gurus'}
         </p>
 
         {filteredCoaches.length > 0 ? (
@@ -38,9 +38,9 @@ export default function SearchResults() {
           </div>
         ) : (
           <div className="text-center py-20 bg-muted/20 rounded-lg">
-            <h2 className="text-xl font-semibold mb-2">No coaches found</h2>
+            <h2 className="text-xl font-semibold mb-2">No gurus found</h2>
             <p className="text-muted-foreground mb-6">
-              Try adjusting your search terms or browse all coaches.
+              Try adjusting your search terms or browse all gurus.
             </p>
             <Button onClick={() => window.location.href = '/'}>
               Back to Home

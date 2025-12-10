@@ -131,7 +131,7 @@ export default function SubmitReview() {
                     <Textarea 
                       id="content" 
                       name="content" 
-                      placeholder="Tell people about the program, the communication, and your results..." 
+                      placeholder="Tell people about the strategy, the mentorship, and your performance..." 
                       className="min-h-[150px] resize-y"
                       required 
                     />
@@ -151,7 +151,7 @@ export default function SubmitReview() {
                     <Checkbox id="paid" name="paid" />
                     <div className="grid gap-1.5 leading-none">
                       <Label htmlFor="paid" className="cursor-pointer font-medium">I paid for this service</Label>
-                      <p className="text-sm text-muted-foreground">This adds the "Verified Client" badge to your review.</p>
+                      <p className="text-sm text-muted-foreground">This adds the "Verified Student" badge to your review.</p>
                     </div>
                   </div>
                 </div>

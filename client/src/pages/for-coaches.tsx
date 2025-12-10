@@ -15,13 +15,13 @@ export default function ForCoaches() {
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
             <div>
-                <h1 className="text-3xl font-bold mb-2">For Coaches</h1>
+                <h1 className="text-3xl font-bold mb-2">For Gurus</h1>
                 <p className="text-muted-foreground">
-                Browse our directory of verified coaches.
+                Browse our directory of verified gurus.
                 </p>
             </div>
             <Link href="/create-profile">
-                <Button>Create Coach Profile</Button>
+                <Button>Create Guru Profile</Button>
             </Link>
         </div>
 

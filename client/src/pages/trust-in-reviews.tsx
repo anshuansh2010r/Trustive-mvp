@@ -15,9 +15,9 @@ export default function TrustInReviews() {
           </p>
           <h3>For Users</h3>
           <p>
-            Always look for the "Verified Client" badge. This means we have seen proof of payment for the service.
+            Always look for the "Verified Student" badge. This means we have seen proof of payment for the service.
           </p>
-           <h3>For Coaches</h3>
+           <h3>For Gurus</h3>
           <p>
             You cannot delete negative reviews, but you can report them if they violate our content guidelines (e.g., abusive language).
           </p>

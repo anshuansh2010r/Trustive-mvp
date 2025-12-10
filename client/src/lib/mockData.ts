@@ -34,23 +34,23 @@ const INITIAL_COACHES: Coach[] = [
   {
     id: "coach-1",
     name: "Alex Rivera",
-    handle: "@arivera_fit",
-    category: "Fat Loss & Lifestyle",
+    handle: "@arivera_trades",
+    category: "Forex & Crypto",
     country: "USA",
     avatar: "AR",
     rating: 0, // Will be calculated
     reviewCount: 0, // Will be calculated
     location: "Los Angeles, CA",
-    bio: "Helping busy professionals lose fat and keep it off without giving up their favorite foods.",
-    website: "https://alexriverafit.com",
+    bio: "Helping busy professionals consistently profit from the markets without staring at charts all day.",
+    website: "https://alexriveratrades.com",
     reviews: [
       {
         id: "r1",
         author: "Sarah M.",
         rating: 5,
         date: "2 days ago",
-        title: "Changed my life!",
-        content: "I've tried every diet out there. Alex's approach is the only one that stuck. He's supportive but holds you accountable.",
+        title: "Changed my portfolio!",
+        content: "I've tried every strategy out there. Alex's approach is the only one that works. He's supportive but holds you accountable.",
         verified: true,
         location: "New York, NY"
       },
@@ -59,8 +59,8 @@ const INITIAL_COACHES: Coach[] = [
         author: "James K.",
         rating: 4,
         date: "1 week ago",
-        title: "Great program, slow app",
-        content: "The workout programming is top notch. The app he uses is a bit glitchy sometimes, but the coaching itself is solid.",
+        title: "Great signals, slow alerts",
+        content: "The trade setups are top notch. The discord he uses is a bit glitchy sometimes, but the mentorship itself is solid.",
         verified: true,
         location: "Chicago, IL"
       }
@@ -68,24 +68,24 @@ const INITIAL_COACHES: Coach[] = [
   },
   {
     id: "coach-2",
-    name: "Muscle Momma",
-    handle: "@musclemomma_pro",
-    category: "Postpartum & Strength",
+    name: "Crypto Queen",
+    handle: "@cryptoqueen_pro",
+    category: "Altcoins & DeFi",
     country: "USA",
-    avatar: "MM",
+    avatar: "CQ",
     rating: 0,
     reviewCount: 0,
     location: "Austin, TX",
-    bio: "Specializing in helping moms get their strength back safely. Diastasis recti safe programming.",
-    website: "https://musclemomma.com",
+    bio: "Specializing in helping beginners navigate DeFi safely. Rugpull-proof strategies.",
+    website: "https://cryptoqueen.com",
     reviews: [
       {
         id: "r3",
         author: "Emily R.",
         rating: 5,
         date: "3 days ago",
-        title: "Finally feel like myself again",
-        content: "After my second baby, I thought I'd never lift heavy again. 6 months in and I'm stronger than pre-pregnancy.",
+        title: "Finally profitable again",
+        content: "After my second liquidation, I thought I'd never trade again. 6 months in and I'm up 300%.",
         verified: true,
         location: "Seattle, WA"
       }
@@ -94,14 +94,14 @@ const INITIAL_COACHES: Coach[] = [
   {
     id: "coach-3",
     name: "David Chen",
-    handle: "@dchen_performance",
-    category: "Hybrid Athlete",
+    handle: "@dchen_capital",
+    category: "Day Trading",
     country: "UK",
     avatar: "DC",
     rating: 0,
     reviewCount: 0,
     location: "London, UK",
-    bio: "Run fast, lift heavy. Hybrid training for the modern athlete.",
+    bio: "Trade fast, profit heavy. Day trading for the modern market.",
     // No website for testing
     reviews: [
       {
@@ -110,7 +110,7 @@ const INITIAL_COACHES: Coach[] = [
         rating: 2,
         date: "2 months ago",
         title: "Ghosted me",
-        content: "Paid for 3 months, heard from him twice. Great plans but zero communication.",
+        content: "Paid for 3 months, heard from him twice. Great signals but zero communication.",
         verified: false,
         location: "Manchester, UK"
       }
@@ -130,7 +130,7 @@ INITIAL_COACHES.forEach(coach => {
 // normally we'd use localStorage for everything but let's try to be cleaner)
 // We will use localStorage to persist the "database" so it works across pages.
 
-const STORAGE_KEY = "trustive_coaches_data";
+const STORAGE_KEY = "trustive_gurus_data";
 const USERS_KEY = "trustive_users";
 const COACH_ACCOUNTS_KEY = "trustive_coach_accounts";
 
